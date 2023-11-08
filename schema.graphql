@@ -1,0 +1,41 @@
+type Proposal {
+  id: ID!
+  proposer: String!
+  targets: [String!]!
+  values: [String!]!
+  signatures: [String!]!
+  calldatas: [String!]!
+  voteStart: String!
+  voteEnd: String!
+  description: String!
+  status: String!
+  votes: [Vote!]! 
+  voteCount: Int! 
+  inFavorCount: Int! 
+  againstCount: Int! 
+  abstainCount: Int! 
+}
+
+type Voter {
+  id: ID!
+  address: String!
+  votes: [Vote!]! 
+  votingWeight: String! 
+}
+
+type Vote {
+  id: ID!
+  voter: Voter!
+  proposal: Proposal!
+  support: Int! 
+  weight: String!
+  reason: String!
+}
+
+type ProposalOverview {
+  id: ID!
+  totalCount: Int!
+  activeCount: Int!
+  executedCount: Int!
+  canceledCount: Int!
+}

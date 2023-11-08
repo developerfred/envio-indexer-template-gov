@@ -1,0 +1,28 @@
+name: indexer-on-chain-governance # Name of the project
+description: Indexer on-chain Governance Template # Description of the project
+networks: # Configuration of the blockchain networks that the project is deployed on
+  - id: 1337 # Chain identifier of the network
+    rpc_config:
+      url: http://localhost:8545 # RPC URL that will be used to subscribe to blockchain data on this network
+    start_block: 0 # Initial block from which the indexer will start listening for events
+    contracts: # Configuration for each contract
+      - name: GovernanceContract # User-defined contract name
+        abi_file_path: abis/GovernanceContract.json # File location of the contract ABI
+        address: "0x0000000000000000000000000000000000000000" # An array of addresses that the contract is deployed to on the network
+        handler: src/EventHandlers.ts # Location of the file that handles the events emitted by this contract
+        events: # Configuration for each event emitted by this contract that the indexer will listen for
+          - event: ProposalCanceled(uint256)
+            requiredEntities:
+              - name: Proposal
+          - event: ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)
+            requiredEntities:
+              - name: Proposal
+          - event: ProposalExecuted(uint256)
+            requiredEntities:
+              - name: Proposal
+          - event: VoteCast(address,uint256,uint8,uint256,string)
+            requiredEntities:
+              - name: Vote
+          - event: VoteCastWithParams(address,uint256,uint8,uint256,string,bytes)
+            requiredEntities:
+              - name: Vote
