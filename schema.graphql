@@ -5,7 +5,7 @@ type EventsSummary {
   proposalCreated: [ProposalCreated!]! @derivedFrom(field: "eventsSummary")
   proposalCreatedsCount: BigInt!
   proposalExecuted: [ProposalExecuted!]! @derivedFrom(field: "eventsSummary")
-  proposalExecutedsCoxunt: BigInt!
+  proposalExecutedsCount: BigInt!
   proposalQueued: [ProposalQueued!]! @derivedFrom(field: "eventsSummary")
   proposalQueuedsCount: BigInt!
   proposalThresholdSet: [ProposalThresholdSet!]! @derivedFrom(field: "eventsSummary")
