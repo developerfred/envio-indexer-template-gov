@@ -10,7 +10,6 @@ networks: # Configuration of the blockchain networks that the project is deploye
         abi_file_path: abis/GovernanceContract.json # File location of the contract ABI
         address:
         - 0x9d4c63565d5618310271bf3f3c01b2954c1d1639
-        - 0xec568fffba86c094cf06b22134b23074dfe2252c
         handler: src/EventHandlers.ts
         events:
         - event: ProposalCanceled(uint256 proposalId)
