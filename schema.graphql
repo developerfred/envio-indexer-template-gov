@@ -5,7 +5,7 @@ type EventsSummary {
   proposalCreated: [ProposalCreated!]! @derivedFrom(field: "eventsSummary")
   proposalCreatedsCount: BigInt!
   proposalExecuted: [ProposalExecuted!]! @derivedFrom(field: "eventsSummary")
-  proposalExecutedsCount: BigInt!
+  proposalExecutedsCoxunt: BigInt!
   proposalQueued: [ProposalQueued!]! @derivedFrom(field: "eventsSummary")
   proposalQueuedsCount: BigInt!
   proposalThresholdSet: [ProposalThresholdSet!]! @derivedFrom(field: "eventsSummary")
@@ -81,9 +81,7 @@ type VoteCast {
   support: BigInt!
   weight: BigInt!
   reason: String!
-  eventsSummary: String!
-  proposalTitle: String! 
-  proposalDescription: String!
+  eventsSummary: String!    
 }
 type VoteCastWithParams {
   id: ID!
