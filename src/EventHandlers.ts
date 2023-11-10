@@ -48,7 +48,7 @@ const INITIAL_EVENTS_SUMMARY: EventsSummaryEntity = {
   voteCastsCount: BigInt(0),
   voteCastWithParamssCount: BigInt(0),
   votingDelaySetsCount: BigInt(0),
-  votingPeriodSetsCount: BigInt(0),
+  votingPeriodSetsCount: BigInt(0),  
 };
 
 GovernanceContract_ProposalCanceled_loader(({ event, context }) => {
@@ -103,6 +103,9 @@ GovernanceContract_ProposalCreated_handler(({ event, context }) => {
     endBlock: event.params.endBlock,
     description: event.params.description,
     eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
+    favorableVotesCount: 0n,
+    totalVotesCount: 0n,
+    currentState: "",
   };
 
   context.EventsSummary.set(nextSummaryEntity);
@@ -234,7 +237,7 @@ GovernanceContract_VoteCast_handler(({ event, context }) => {
     support: event.params.support,
     weight: event.params.weight,
     reason: event.params.reason,
-    eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
+    eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,        
   };
 
   context.EventsSummary.set(nextSummaryEntity);

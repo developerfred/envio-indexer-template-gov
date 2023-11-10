@@ -81,9 +81,7 @@ type VoteCast {
   support: BigInt!
   weight: BigInt!
   reason: String!
-  eventsSummary: String!
-  proposalTitle: String! 
-  proposalDescription: String!
+  eventsSummary: String!    
 }
 type VoteCastWithParams {
   id: ID!
