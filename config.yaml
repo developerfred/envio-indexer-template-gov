@@ -6,23 +6,40 @@ networks: # Configuration of the blockchain networks that the project is deploye
       url: https://eth.llamarpc.com # RPC URL that will be used to subscribe to blockchain data on this network
     start_block: 12422079 # Initial block from which the indexer will start listening for events
     contracts: # Configuration for each contract
-      - name: GovernanceContract # User-defined contract name
+      - name: Governance # User-defined contract name
         abi_file_path: abis/GovernanceContract.json # File location of the contract ABI
-        address: "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F" # An array of addresses that the contract is deployed to on the network
-        handler: src/EventHandlers.ts # Location of the file that handles the events emitted by this contract
-        events: # Configuration for each event emitted by this contract that the indexer will listen for
-          - event: ProposalCanceled(uint256)
-            requiredEntities:
-              - name: Proposal
-          - event: ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)
-            requiredEntities:
-              - name: Proposal
-          - event: ProposalExecuted(uint256)
-            requiredEntities:
-              - name: Proposal
-          - event: VoteCast(address,uint256,uint8,uint256,string)
-            requiredEntities:
-              - name: Vote
-          - event: VoteCastWithParams(address,uint256,uint8,uint256,string,bytes)
-            requiredEntities:
-              - name: Vote
+        address:
+        - 0x9d4c63565d5618310271bf3f3c01b2954c1d1639
+        - 0xec568fffba86c094cf06b22134b23074dfe2252c
+        handler: src/EventHandlers.ts
+        events:
+        - event: ProposalCanceled(uint256 proposalId)
+          requiredEntities:
+          - name: EventsSummary
+        - event: ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)
+          requiredEntities:
+          - name: EventsSummary
+        - event: ProposalExecuted(uint256 proposalId)
+          requiredEntities:
+          - name: EventsSummary
+        - event: ProposalQueued(uint256 proposalId, uint256 eta)
+          requiredEntities:
+          - name: EventsSummary
+        - event: ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold)
+          requiredEntities:
+          - name: EventsSummary
+        - event: TimelockChange(address oldTimelock, address newTimelock)
+          requiredEntities:
+          - name: EventsSummary
+        - event: VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)
+          requiredEntities:
+          - name: EventsSummary
+        - event: VoteCastWithParams(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason, bytes params)
+          requiredEntities:
+          - name: EventsSummary
+        - event: VotingDelaySet(uint256 oldVotingDelay, uint256 newVotingDelay)
+          requiredEntities:
+          - name: EventsSummary
+        - event: VotingPeriodSet(uint256 oldVotingPeriod, uint256 newVotingPeriod)
+          requiredEntities:
+          - name: EventsSummary
