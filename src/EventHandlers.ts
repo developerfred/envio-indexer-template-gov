@@ -48,7 +48,7 @@ const INITIAL_EVENTS_SUMMARY: EventsSummaryEntity = {
   voteCastsCount: BigInt(0),
   voteCastWithParamssCount: BigInt(0),
   votingDelaySetsCount: BigInt(0),
-  votingPeriodSetsCount: BigInt(0),
+  votingPeriodSetsCount: BigInt(0),  
 };
 
 GovernanceContract_ProposalCanceled_loader(({ event, context }) => {
@@ -105,7 +105,7 @@ GovernanceContract_ProposalCreated_handler(({ event, context }) => {
     eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
     favorableVotesCount: 0n,
     totalVotesCount: 0n,
-    currentState: ""
+    currentState: "",
   };
 
   context.EventsSummary.set(nextSummaryEntity);
