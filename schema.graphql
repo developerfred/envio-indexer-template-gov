@@ -1,32 +1,57 @@
-type EventsSummary {
+type Organization @entity {
   id: ID!
-  proposalCanceled: [ProposalCanceled!]! @derivedFrom(field: "eventsSummary")
-  proposalCanceledsCount: BigInt!
-  proposalCreated: [ProposalCreated!]! @derivedFrom(field: "eventsSummary")
-  proposalCreatedsCount: BigInt!
-  proposalExecuted: [ProposalExecuted!]! @derivedFrom(field: "eventsSummary")
-  proposalExecutedsCount: BigInt!
-  proposalQueued: [ProposalQueued!]! @derivedFrom(field: "eventsSummary")
-  proposalQueuedsCount: BigInt!
-  proposalThresholdSet: [ProposalThresholdSet!]! @derivedFrom(field: "eventsSummary")
-  proposalThresholdSetsCount: BigInt!
-  timelockChange: [TimelockChange!]! @derivedFrom(field: "eventsSummary")
-  timelockChangesCount: BigInt!
-  voteCast: [VoteCast!]! @derivedFrom(field: "eventsSummary")
-  voteCastsCount: BigInt!
-  voteCastWithParams: [VoteCastWithParams!]! @derivedFrom(field: "eventsSummary")
-  voteCastWithParamssCount: BigInt!
-  votingDelaySet: [VotingDelaySet!]! @derivedFrom(field: "eventsSummary")
-  votingDelaySetsCount: BigInt!
-  votingPeriodSet: [VotingPeriodSet!]! @derivedFrom(field: "eventsSummary")
-  votingPeriodSetsCount: BigInt!
 }
+
+type User @entity {
+  id: ID!
+  votes: [Vote!]! @derivedFrom(field: "user")
+  delegations: [Delegation!]! @derivedFrom(field: "user")
+  organization: Organization
+}
+
+type Delegation @entity {
+  id: ID!
+  user: User!
+  delegator: User!
+  votes: [Vote!]! @derivedFrom(field: "delegation")
+  totalDelegatedVotes: BigInt!
+}
+
+type Proposal @entity {
+  id: ID!
+  status: String
+  description: String!
+  proposer: String!
+  votes: [Vote!]! @derivedFrom(field: "proposal")
+  organization: Organization!
+  timestamp: BigInt!
+  startDate: BigInt!
+  endDate: BigInt
+  totalVotesFor: BigInt!
+  totalVotesAgainst: BigInt!
+  totalDelegatedVotes: BigInt!
+}
+
+
+type Vote @entity {
+  id: ID!
+  user: User!
+  delegation: Delegation
+  proposal: Proposal!
+  support: Boolean
+  weight: BigInt
+  reason: String
+  organization: Organization!
+  timestamp: BigInt!
+}
+
+
 
 type ProposalCanceled {
   id: ID!
   proposalId: BigInt!
-  eventsSummary: String!
 }
+
 type ProposalCreated {
   id: ID!
   proposalId: BigInt!
@@ -38,34 +63,30 @@ type ProposalCreated {
   startBlock: BigInt!
   endBlock: BigInt!
   description: String!
-  eventsSummary: String!
-  favorableVotesCount: BigInt!
-  totalVotesCount: BigInt! 
-  currentState: String! 
 }
+
 
 type ProposalExecuted {
   id: ID!
   proposalId: BigInt!
-  eventsSummary: String!
 }
+
 type ProposalQueued {
   id: ID!
   proposalId: BigInt!
   eta: BigInt!
-  eventsSummary: String!
 }
+
 type ProposalThresholdSet {
   id: ID!
   oldProposalThreshold: BigInt!
   newProposalThreshold: BigInt!
-  eventsSummary: String!
 }
+
 type TimelockChange {
   id: ID!
   oldTimelock: String!
   newTimelock: String!
-  eventsSummary: String!
 }
 
 type Delegator {
@@ -78,30 +99,29 @@ type VoteCast {
   id: ID!
   voter: String!
   proposalId: BigInt!
-  support: BigInt!
+  support: Boolean!
   weight: BigInt!
   reason: String!
-  eventsSummary: String!    
 }
+
 type VoteCastWithParams {
   id: ID!
   voter: String!
   proposalId: BigInt!
-  support: BigInt!
+  support: Boolean!
   weight: BigInt!
   reason: String!
   params: String!
-  eventsSummary: String!
 }
+
 type VotingDelaySet {
   id: ID!
   oldVotingDelay: BigInt!
   newVotingDelay: BigInt!
-  eventsSummary: String!
 }
+
 type VotingPeriodSet {
   id: ID!
   oldVotingPeriod: BigInt!
   newVotingPeriod: BigInt!
-  eventsSummary: String!
 }
