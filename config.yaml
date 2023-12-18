@@ -1,44 +1,44 @@
-name: indexer-on-chain-governance # Name of the project
-description: Indexer on-chain Governance Template # Description of the project
-networks: # Configuration of the blockchain networks that the project is deployed on
-  - id: 1 # Chain identifier of the network
+name: indexer-on-chain-governance 
+description: Indexer on-chain Governance Template 
+networks: 
+  - id: 1 
     rpc_config:
-      url: https://eth.llamarpc.com # RPC URL that will be used to subscribe to blockchain data on this network
-    start_block: 12422079 # Initial block from which the indexer will start listening for events
-    contracts: # Configuration for each contract
-      - name: Governance # User-defined contract name
-        abi_file_path: abis/GovernanceContract.json # File location of the contract ABI
+      url: https://eth.llamarpc.com 
+    start_block: 12422079 
+    contracts: 
+      - name: Governance 
+        abi_file_path: abis/GovernanceContract.json 
         address:
-        - 0x9d4c63565d5618310271bf3f3c01b2954c1d1639
+          - 0x9d4c63565d5618310271bf3f3c01b2954c1d1639
         handler: src/EventHandlers.ts
         events:
-        - event: ProposalCanceled(uint256 proposalId)
-          requiredEntities:
-          - name: EventsSummary
-        - event: ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)
-          requiredEntities:
-          - name: EventsSummary
-        - event: ProposalExecuted(uint256 proposalId)
-          requiredEntities:
-          - name: EventsSummary
-        - event: ProposalQueued(uint256 proposalId, uint256 eta)
-          requiredEntities:
-          - name: EventsSummary
-        - event: ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold)
-          requiredEntities:
-          - name: EventsSummary
-        - event: TimelockChange(address oldTimelock, address newTimelock)
-          requiredEntities:
-          - name: EventsSummary
-        - event: VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)
-          requiredEntities:
-          - name: EventsSummary
-        - event: VoteCastWithParams(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason, bytes params)
-          requiredEntities:
-          - name: EventsSummary
-        - event: VotingDelaySet(uint256 oldVotingDelay, uint256 newVotingDelay)
-          requiredEntities:
-          - name: EventsSummary
-        - event: VotingPeriodSet(uint256 oldVotingPeriod, uint256 newVotingPeriod)
-          requiredEntities:
-          - name: EventsSummary
+          - event: ProposalCanceled(uint256 proposalId)
+            requiredEntities:
+              - name: ProposalCanceled
+          - event: ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)
+            requiredEntities:
+              - name: ProposalCreated
+          - event: ProposalExecuted(uint256 proposalId)
+            requiredEntities:
+              - name: ProposalExecuted
+          - event: ProposalQueued(uint256 proposalId, uint256 eta)
+            requiredEntities:
+              - name: ProposalQueued
+          - event: ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold)
+            requiredEntities:
+              - name: ProposalThresholdSet
+          - event: TimelockChange(address oldTimelock, address newTimelock)
+            requiredEntities:
+              - name: TimelockChange
+          - event: VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)
+            requiredEntities:
+              - name: VoteCast
+          - event: VoteCastWithParams(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason, bytes params)
+            requiredEntities:
+              - name: VoteCastWithParams
+          - event: VotingDelaySet(uint256 oldVotingDelay, uint256 newVotingDelay)
+            requiredEntities:
+              - name: VotingDelaySet
+          - event: VotingPeriodSet(uint256 oldVotingPeriod, uint256 newVotingPeriod)
+            requiredEntities:
+              - name: VotingPeriodSet
