@@ -4,41 +4,60 @@ networks:
   - id: 1 
     rpc_config:
       url: https://eth.llamarpc.com 
-    start_block: 12422079 
+    start_block: 12422075    
     contracts: 
       - name: Governance 
         abi_file_path: abis/GovernanceContract.json 
         address:
           - 0x9d4c63565d5618310271bf3f3c01b2954c1d1639
+          - 0x323A76393544d5ecca80cd6ef2A560C6a395b7E3
         handler: src/EventHandlers.ts
         events:
           - event: ProposalCanceled(uint256 proposalId)
             requiredEntities:
-              - name: ProposalCanceled
+              - name: User
+              - name: Proposal
+              - name: Vote
           - event: ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)
             requiredEntities:
-              - name: ProposalCreated
+              - name: User
+              - name: Proposal
+              - name: Vote
           - event: ProposalExecuted(uint256 proposalId)
             requiredEntities:
-              - name: ProposalExecuted
+              - name: User
+              - name: Proposal
+              - name: Vote
           - event: ProposalQueued(uint256 proposalId, uint256 eta)
             requiredEntities:
-              - name: ProposalQueued
-          - event: ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold)
-            requiredEntities:
-              - name: ProposalThresholdSet
-          - event: TimelockChange(address oldTimelock, address newTimelock)
-            requiredEntities:
-              - name: TimelockChange
+              - name: User
+              - name: Proposal
+              - name: Vote
           - event: VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)
             requiredEntities:
-              - name: VoteCast
+              - name: User
+              - name: Proposal
+              - name: Vote
           - event: VoteCastWithParams(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason, bytes params)
             requiredEntities:
-              - name: VoteCastWithParams
-          - event: VotingDelaySet(uint256 oldVotingDelay, uint256 newVotingDelay)
+              - name: User
+              - name: Proposal
+              - name: Vote        
+      - name: GitcoinToken 
+        abi_file_path: abis/gtcToken.json 
+        address:
+          - 0xde30da39c46104798bb5aa3fe8b9e0e1f348163f
+        handler: src/EventHandlers.ts
+        entities:
+          - Delegate
+          - Delegator
+        events:
+          - event: DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate)
             requiredEntities:
-              - name: VotingDelaySet
-          - event: VotingPeriodSet(uint256 oldVotingPeriod, uint256 newVotingPeriod)
+              - name: Delegation
+              - name: Delegator
+          - event: DelegateVotesChanged(address indexed delegate, uint256 previousBalance, uint256 newBalance)
             requiredEntities:
-              - name: VotingPeriodSet
+              - name: Delegation
+              - name: Delegator
+                      

@@ -3,12 +3,14 @@ import {
   GovernanceContract_ProposalCreated_handler,
   GovernanceContract_ProposalExecuted_handler,
   GovernanceContract_ProposalQueued_handler,
-  GovernanceContract_ProposalThresholdSet_handler,
-  GovernanceContract_TimelockChange_handler,
+  
+  
   GovernanceContract_VoteCast_handler,
   GovernanceContract_VoteCastWithParams_handler,
-  GovernanceContract_VotingDelaySet_handler,
-  GovernanceContract_VotingPeriodSet_handler,
+  
+  
+  GitcoinTokenContract_DelegateChanged_handler,
+  GitcoinTokenContract_DelegateVotesChanged_handler,
 } from "../generated/src/Handlers.gen";
 
 import {
@@ -110,24 +112,7 @@ GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
   context.VoteCastWithParams.set(voteCastWithParamsEntity);
 });
 
-GovernanceContract_VotingDelaySet_handler(({ event, context }) => {
-  let votingDelaySetEntity: VotingDelaySetEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    oldVotingDelay: event.params.oldVotingDelay,
-    newVotingDelay: event.params.newVotingDelay,
-  };
 
-  context.VotingDelaySet.set(votingDelaySetEntity);
-});
 
-GovernanceContract_VotingPeriodSet_handler(({ event, context }) => {
-  let votingPeriodSetEntity: VotingPeriodSetEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    oldVotingPeriod: event.params.oldVotingPeriod,
-    newVotingPeriod: event.params.newVotingPeriod,
-  };
-
-  context.VotingPeriodSet.set(votingPeriodSetEntity);
-});
 
 
