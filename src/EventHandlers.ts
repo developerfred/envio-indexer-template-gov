@@ -2,115 +2,125 @@ import {
   GovernanceContract_ProposalCanceled_handler,
   GovernanceContract_ProposalCreated_handler,
   GovernanceContract_ProposalExecuted_handler,
-  GovernanceContract_ProposalQueued_handler,
-  
-  
+  GovernanceContract_ProposalQueued_handler,  
   GovernanceContract_VoteCast_handler,
   GovernanceContract_VoteCastWithParams_handler,
-  
-  
-  GitcoinTokenContract_DelegateChanged_handler,
-  GitcoinTokenContract_DelegateVotesChanged_handler,
 } from "../generated/src/Handlers.gen";
 
-import {
-  ProposalCanceledEntity,
-  ProposalCreatedEntity,
-  ProposalExecutedEntity,
-  ProposalQueuedEntity,
-  ProposalThresholdSetEntity,
-  TimelockChangeEntity,
-  VoteCastEntity,
-  VoteCastWithParamsEntity,
-  VotingDelaySetEntity,
-  VotingPeriodSetEntity,
-  ProposalEntity,
-} from "./src/Types.gen";
+import { getDaoNameByContractAddress, getProposalId } from './helpers';
 
-GovernanceContract_ProposalCanceled_handler(({ event, context }) => {
-  let proposalCanceledEntity: ProposalCanceledEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    proposalId: event.params.proposalId,
-  };
-
-  context.ProposalCanceled.set(proposalCanceledEntity);
-});
 
 GovernanceContract_ProposalCreated_handler(({ event, context }) => {
-  let proposalCreatedEntity: ProposalCreatedEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    proposalId: event.params.proposalId,
-    proposer: event.params.proposer,
-    targets: event.params.targets,
-    values: event.params.values,
-    signatures: event.params.signatures,
-    calldatas: event.params.calldatas,
-    startBlock: event.params.startBlock,
-    endBlock: event.params.endBlock,
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let proposalId = getProposalId(daoName, event.params.proposalId);
+  
+  let newProposal = {
+    id: proposalId,
+    status: "Created",
     description: event.params.description,
+    proposer: event.params.proposer,
+    votes: [],
+    organization: daoName,
+    timestamp: BigInt(event.blockTimestamp),
+    startDate: event.params.startBlock,
+    endDate: event.params.endBlock
   };
 
-  context.ProposalCreated.set(proposalCreatedEntity);
+  context.Proposal.set(newProposal);
 });
 
 
+GovernanceContract_ProposalCanceled_handler(({ event, context }) => {
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let proposalId = getProposalId(daoName, event.params.proposalId);
+  let existingProposal = context.Proposal.get(proposalId);
+  if (existingProposal) {    
+    let updatedProposal = {
+      ...existingProposal, 
+      status: "Canceled",    
+    };
+
+    context.Proposal.set(updatedProposal);
+  }
+});
 
 
 GovernanceContract_ProposalExecuted_handler(({ event, context }) => {
-  let proposalExecutedEntity: ProposalExecutedEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    proposalId: event.params.proposalId,
-  };
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let proposalId = getProposalId(daoName, event.params.proposalId);
 
-  context.ProposalExecuted.set(proposalExecutedEntity);
+  let existingProposal = context.Proposal.get(proposalId);
+  if (existingProposal) {
+    let updatedProposal = {
+      ...existingProposal,
+      status: "Executed",      
+    };
+
+    context.Proposal.set(updatedProposal);
+  }
 });
+
+
 
 GovernanceContract_ProposalQueued_handler(({ event, context }) => {
-  let proposalQueuedEntity: ProposalQueuedEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    proposalId: event.params.proposalId,
-    eta: event.params.eta,
-  };
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let proposalId = getProposalId(daoName, event.params.proposalId);
+  let existingProposal = context.Proposal.get(proposalId);
+  if (existingProposal) {    
+    let updatedProposal = {
+      ...existingProposal, 
+      status: "Queued",    
+    };
 
-  context.ProposalQueued.set(proposalQueuedEntity);
+    context.Proposal.set(updatedProposal);
+  }
 });
 
-GovernanceContract_ProposalThresholdSet_handler(({ event, context }) => {
-  let proposalThresholdSetEntity: ProposalThresholdSetEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    oldProposalThreshold: event.params.oldProposalThreshold,
-    newProposalThreshold: event.params.newProposalThreshold,
+GovernanceContract_VoteCast_handler(({ event, context }) => {
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let proposalIdBigInt = BigInt(event.params.proposalId);
+  let proposalId = getProposalId(daoName, proposalIdBigInt);
+  let voteId = `${proposalId}-${event.params.voter}`;
+
+  let newVote = {
+    id: voteId,
+    user: event.params.voter,
+    proposal: proposalId,    
+    support: Number(event.params.support),    
+    weight: event.params.weight,
+    reason: event.params.reason,
+    organization: daoName,
+    solution: BigInt(0),
+    timestamp: BigInt(event.blockTimestamp)
   };
 
-  context.ProposalThresholdSet.set(proposalThresholdSetEntity);
-});
-
-GovernanceContract_TimelockChange_handler(({ event, context }) => {
-  let timelockChangeEntity: TimelockChangeEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    oldTimelock: event.params.oldTimelock,
-    newTimelock: event.params.newTimelock,
-  };
-
-  context.TimelockChange.set(timelockChangeEntity);
+  context.Vote.set(newVote);
 });
 
 
 
 GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
-  let supportValue = event.params.support === BigInt(1);
-  let voteCastWithParamsEntity: VoteCastWithParamsEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    voter: event.params.voter,
-    proposalId: event.params.proposalId,
-    support: supportValue,
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let proposalIdBigInt = BigInt(event.params.proposalId);
+  let proposalId = getProposalId(daoName, proposalIdBigInt);
+  let voteId = `${proposalId}-${event.params.voter}`;
+
+  let newVote = {
+    id: voteId,
+    user: event.params.voter,
+    proposal: proposalId,
+    support: Number(event.params.support), 
     weight: event.params.weight,
     reason: event.params.reason,
-    params: event.params.params,
+    solution: BigInt(event.params.params), 
+    organization: daoName,
+    timestamp: BigInt(event.blockTimestamp)
   };
 
-  context.VoteCastWithParams.set(voteCastWithParamsEntity);
+  context.Vote.set(newVote);
 });
+
+
 
 
 

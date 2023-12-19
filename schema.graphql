@@ -5,21 +5,12 @@ type Organization @entity {
 type User @entity {
   id: ID!
   votes: [Vote!]! @derivedFrom(field: "user")
-  delegations: [Delegation!]! @derivedFrom(field: "user")
   organization: Organization
-}
-
-type Delegation @entity {
-  id: ID!
-  user: User!
-  delegator: User!
-  votes: [Vote!]! @derivedFrom(field: "delegation")
-  totalDelegatedVotes: BigInt!
 }
 
 type Proposal @entity {
   id: ID!
-  status: String
+  status: String! 
   description: String!
   proposer: String!
   votes: [Vote!]! @derivedFrom(field: "proposal")
@@ -27,101 +18,16 @@ type Proposal @entity {
   timestamp: BigInt!
   startDate: BigInt!
   endDate: BigInt
-  totalVotesFor: BigInt!
-  totalVotesAgainst: BigInt!
-  totalDelegatedVotes: BigInt!
 }
-
 
 type Vote @entity {
   id: ID!
   user: User!
-  delegation: Delegation
   proposal: Proposal!
-  support: Boolean
+  support: Int
+  solution: BigInt
   weight: BigInt
   reason: String
   organization: Organization!
   timestamp: BigInt!
-}
-
-
-
-type ProposalCanceled {
-  id: ID!
-  proposalId: BigInt!
-}
-
-type ProposalCreated {
-  id: ID!
-  proposalId: BigInt!
-  proposer: String!
-  targets: [String!]!
-  values: [BigInt!]!
-  signatures: [String!]!
-  calldatas: [String!]!
-  startBlock: BigInt!
-  endBlock: BigInt!
-  description: String!
-}
-
-
-type ProposalExecuted {
-  id: ID!
-  proposalId: BigInt!
-}
-
-type ProposalQueued {
-  id: ID!
-  proposalId: BigInt!
-  eta: BigInt!
-}
-
-type ProposalThresholdSet {
-  id: ID!
-  oldProposalThreshold: BigInt!
-  newProposalThreshold: BigInt!
-}
-
-type TimelockChange {
-  id: ID!
-  oldTimelock: String!
-  newTimelock: String!
-}
-
-type Delegator {
-  id: ID!
-  delegatorAddress: String!
-  delegatedVotesCount: BigInt!
-}
-
-type VoteCast {
-  id: ID!
-  voter: String!
-  proposalId: BigInt!
-  support: Boolean!
-  weight: BigInt!
-  reason: String!
-}
-
-type VoteCastWithParams {
-  id: ID!
-  voter: String!
-  proposalId: BigInt!
-  support: Boolean!
-  weight: BigInt!
-  reason: String!
-  params: String!
-}
-
-type VotingDelaySet {
-  id: ID!
-  oldVotingDelay: BigInt!
-  newVotingDelay: BigInt!
-}
-
-type VotingPeriodSet {
-  id: ID!
-  oldVotingPeriod: BigInt!
-  newVotingPeriod: BigInt!
 }

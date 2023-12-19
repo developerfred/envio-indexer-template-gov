@@ -11,6 +11,7 @@ networks:
         address:
           - 0x9d4c63565d5618310271bf3f3c01b2954c1d1639
           - 0x323A76393544d5ecca80cd6ef2A560C6a395b7E3
+          - 0x6f3E6272A167e8AcCb32072d08E0957F9c79223d
         handler: src/EventHandlers.ts
         events:
           - event: ProposalCanceled(uint256 proposalId)
@@ -43,21 +44,3 @@ networks:
               - name: User
               - name: Proposal
               - name: Vote        
-      - name: GitcoinToken 
-        abi_file_path: abis/gtcToken.json 
-        address:
-          - 0xde30da39c46104798bb5aa3fe8b9e0e1f348163f
-        handler: src/EventHandlers.ts
-        entities:
-          - Delegate
-          - Delegator
-        events:
-          - event: DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate)
-            requiredEntities:
-              - name: Delegation
-              - name: Delegator
-          - event: DelegateVotesChanged(address indexed delegate, uint256 previousBalance, uint256 newBalance)
-            requiredEntities:
-              - name: Delegation
-              - name: Delegator
-                      
