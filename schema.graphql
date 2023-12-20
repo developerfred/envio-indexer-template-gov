@@ -1,16 +1,22 @@
 type Organization @entity {
   id: ID!
+  token: String!
+  delegates: [DelegateOrganization!] @derivedFrom(field: "organization")
+  delegators: [DelegatorOrganization!] @derivedFrom(field: "organization")
 }
 
 type User @entity {
   id: ID!
   votes: [Vote!]! @derivedFrom(field: "user")
   organization: Organization
+  delegateOrganizations: [DelegateOrganization!] @derivedFrom(field: "delegate")
+  delegatorOrganizations: [DelegatorOrganization!]
+    @derivedFrom(field: "delegator")
 }
 
 type Proposal @entity {
   id: ID!
-  status: String! 
+  status: String!
   description: String!
   proposer: String!
   votes: [Vote!]! @derivedFrom(field: "proposal")
@@ -29,5 +35,51 @@ type Vote @entity {
   weight: BigInt
   reason: String
   organization: Organization!
+  timestamp: BigInt!
+}
+
+type DelegateOrganization @entity {
+  id: ID! # Set to `${user.id}-${organization.id}`
+  delegate: User!
+  organization: Organization!
+  voteBalance: BigInt!
+  firstTokenDelegatedAt: BigInt
+}
+
+type DelegatorOrganization @entity {
+  id: ID! # Set to `${user.id}-${organization.id}`
+  delegator: User!
+  delegate: User!
+  organization: Organization!
+}
+
+type DelegateVotingPowerChange @entity {
+  id: ID!
+  tokenAddress: String!
+  delegate: String!
+  previousBalance: BigInt!
+  newBalance: BigInt!
+  blockTimestamp: BigInt!
+  txnHash: String!
+  blockNumber: BigInt!
+}
+
+type DelegateChange @entity {
+  id: ID!
+  oldDelegate: String
+  newDelegate: String
+  delegator: String!
+  blockTimestamp: BigInt!
+  txnHash: String!
+  blockNumber: BigInt!
+}
+
+type DelegatingHistory @entity {
+  id: String!
+  daoName: String!
+  fromDelegate: String
+  toDelegate: String
+  delegator: String!
+  amount: BigInt!
   timestamp: BigInt!
 }
