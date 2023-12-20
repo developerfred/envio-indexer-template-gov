@@ -5,6 +5,8 @@ import {
   GovernanceContract_ProposalQueued_handler,  
   GovernanceContract_VoteCast_handler,
   GovernanceContract_VoteCastWithParams_handler,
+  GovTokenContract_DelegateChanged_handler,
+  GovTokenContract_DelegateVotesChanged_handler,
 } from "../generated/src/Handlers.gen";
 
 import { getDaoNameByContractAddress, getProposalId } from './helpers';
@@ -109,9 +111,6 @@ GovernanceContract_VoteCast_handler(({ event, context }) => {
 });
 
 
-
-
-
 GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
   let daoName = getDaoNameByContractAddress(event.srcAddress);
   let proposalIdBigInt = BigInt(event.params.proposalId);
@@ -143,6 +142,7 @@ GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
   context.Vote.set(newVote);
 });
 
+// Delegator Handlers 
 
 
 
