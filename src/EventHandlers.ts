@@ -81,21 +81,34 @@ GovernanceContract_VoteCast_handler(({ event, context }) => {
   let proposalIdBigInt = BigInt(event.params.proposalId);
   let proposalId = getProposalId(daoName, proposalIdBigInt);
   let voteId = `${proposalId}-${event.params.voter}`;
+ 
+  let userId = event.params.voter;
+  let user = context.User.get(userId);
+  if (!user) {
+    user = {
+      id: userId,
+      organization: daoName, 
+    };
+    context.User.set(user);
+  }
 
+  
   let newVote = {
     id: voteId,
-    user: event.params.voter,
-    proposal: proposalId,    
-    support: Number(event.params.support),    
-    weight: event.params.weight,
+    user: userId, 
+    proposal: proposalId,
+    support: Number(event.params.support), 
+    weight: event.params.weight, 
     reason: event.params.reason,
-    organization: daoName,
-    solution: BigInt(0),
-    timestamp: BigInt(event.blockTimestamp)
+    organization: daoName, 
+    solution: BigInt(0), 
+    timestamp: BigInt(event.blockTimestamp) 
   };
 
   context.Vote.set(newVote);
 });
+
+
 
 
 
@@ -104,6 +117,16 @@ GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
   let proposalIdBigInt = BigInt(event.params.proposalId);
   let proposalId = getProposalId(daoName, proposalIdBigInt);
   let voteId = `${proposalId}-${event.params.voter}`;
+
+  let userId = event.params.voter;
+  let user = context.User.get(userId);
+  if (!user) {
+    user = {
+      id: userId,
+      organization: daoName, 
+    };
+  }
+  context.User.set(user);
 
   let newVote = {
     id: voteId,
