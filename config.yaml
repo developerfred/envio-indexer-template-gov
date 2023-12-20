@@ -1,13 +1,13 @@
-name: indexer-on-chain-governance 
-description: Indexer on-chain Governance Template 
-networks: 
-  - id: 1 
+name: indexer-on-chain-governance
+description: Indexer on-chain Governance Template
+networks:
+  - id: 1
     rpc_config:
-      url: https://eth.llamarpc.com 
-    start_block: 12422075    
-    contracts: 
-      - name: Governance 
-        abi_file_path: abis/GovernanceContract.json 
+      url: https://eth.llamarpc.com
+    start_block: 12422075
+    contracts:
+      - name: Governance
+        abi_file_path: abis/GovernanceContract.json
         address:
           - 0x9d4c63565d5618310271bf3f3c01b2954c1d1639
           - 0x323A76393544d5ecca80cd6ef2A560C6a395b7E3
@@ -43,4 +43,20 @@ networks:
             requiredEntities:
               - name: User
               - name: Proposal
-              - name: Vote        
+              - name: Vote
+      - name: GovToken
+        abi_file_path: abis/gitcoinToken.json
+        address:
+          - 0xde30da39c46104798bb5aa3fe8b9e0e1f348163f
+          - 0xc18360217d8f7ab5e7c516566761ea12ce7f9d72
+        handler: src/EventHandlers.ts
+        events:
+          - event: DelegateChanged(address indexed delegator,address indexed fromDelegate ,address indexed toDelegate)
+            requiredEntities:
+              - name: User               
+          - event: DelegateVotesChanged(address indexed delegate , uint256 previousBalance , uint256 newBalance)
+            requiredEntities:
+              - name: User
+              
+              
+
