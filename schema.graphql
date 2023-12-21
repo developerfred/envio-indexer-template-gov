@@ -1,107 +1,85 @@
-type EventsSummary {
+type Organization @entity {
   id: ID!
-  proposalCanceled: [ProposalCanceled!]! @derivedFrom(field: "eventsSummary")
-  proposalCanceledsCount: BigInt!
-  proposalCreated: [ProposalCreated!]! @derivedFrom(field: "eventsSummary")
-  proposalCreatedsCount: BigInt!
-  proposalExecuted: [ProposalExecuted!]! @derivedFrom(field: "eventsSummary")
-  proposalExecutedsCount: BigInt!
-  proposalQueued: [ProposalQueued!]! @derivedFrom(field: "eventsSummary")
-  proposalQueuedsCount: BigInt!
-  proposalThresholdSet: [ProposalThresholdSet!]! @derivedFrom(field: "eventsSummary")
-  proposalThresholdSetsCount: BigInt!
-  timelockChange: [TimelockChange!]! @derivedFrom(field: "eventsSummary")
-  timelockChangesCount: BigInt!
-  voteCast: [VoteCast!]! @derivedFrom(field: "eventsSummary")
-  voteCastsCount: BigInt!
-  voteCastWithParams: [VoteCastWithParams!]! @derivedFrom(field: "eventsSummary")
-  voteCastWithParamssCount: BigInt!
-  votingDelaySet: [VotingDelaySet!]! @derivedFrom(field: "eventsSummary")
-  votingDelaySetsCount: BigInt!
-  votingPeriodSet: [VotingPeriodSet!]! @derivedFrom(field: "eventsSummary")
-  votingPeriodSetsCount: BigInt!
+  token: String!
+  delegates: [DelegateOrganization!] @derivedFrom(field: "organization")
+  delegators: [DelegatorOrganization!] @derivedFrom(field: "organization")
 }
 
-type ProposalCanceled {
+type User @entity {
   id: ID!
-  proposalId: BigInt!
-  eventsSummary: String!
+  votes: [Vote!]! @derivedFrom(field: "user")
+  organization: Organization
+  delegateOrganizations: [DelegateOrganization!] @derivedFrom(field: "delegate")
+  delegatorOrganizations: [DelegatorOrganization!]
+    @derivedFrom(field: "delegator")
 }
-type ProposalCreated {
+
+type Proposal @entity {
   id: ID!
-  proposalId: BigInt!
-  proposer: String!
-  targets: [String!]!
-  values: [BigInt!]!
-  signatures: [String!]!
-  calldatas: [String!]!
-  startBlock: BigInt!
-  endBlock: BigInt!
+  status: String!
   description: String!
-  eventsSummary: String!
-  favorableVotesCount: BigInt!
-  totalVotesCount: BigInt! 
-  currentState: String! 
+  proposer: String!
+  votes: [Vote!]! @derivedFrom(field: "proposal")
+  organization: Organization!
+  timestamp: BigInt!
+  startDate: BigInt!
+  endDate: BigInt
 }
 
-type ProposalExecuted {
+type Vote @entity {
   id: ID!
-  proposalId: BigInt!
-  eventsSummary: String!
-}
-type ProposalQueued {
-  id: ID!
-  proposalId: BigInt!
-  eta: BigInt!
-  eventsSummary: String!
-}
-type ProposalThresholdSet {
-  id: ID!
-  oldProposalThreshold: BigInt!
-  newProposalThreshold: BigInt!
-  eventsSummary: String!
-}
-type TimelockChange {
-  id: ID!
-  oldTimelock: String!
-  newTimelock: String!
-  eventsSummary: String!
+  user: User!
+  proposal: Proposal!
+  support: Int
+  solution: BigInt
+  weight: BigInt
+  reason: String
+  organization: Organization!
+  timestamp: BigInt!
 }
 
-type Delegator {
-  id: ID!
-  delegatorAddress: String!
-  delegatedVotesCount: BigInt!
+type DelegateOrganization @entity {
+  id: ID! # Set to `${user.id}-${organization.id}`
+  delegate: User!
+  organization: Organization!
+  voteBalance: BigInt!
+  firstTokenDelegatedAt: BigInt
 }
 
-type VoteCast {
-  id: ID!
-  voter: String!
-  proposalId: BigInt!
-  support: BigInt!
-  weight: BigInt!
-  reason: String!
-  eventsSummary: String!    
+type DelegatorOrganization @entity {
+  id: ID! # Set to `${user.id}-${organization.id}`
+  delegator: User!
+  delegate: User!
+  organization: Organization!
 }
-type VoteCastWithParams {
+
+type DelegateVotingPowerChange @entity {
   id: ID!
-  voter: String!
-  proposalId: BigInt!
-  support: BigInt!
-  weight: BigInt!
-  reason: String!
-  params: String!
-  eventsSummary: String!
+  tokenAddress: String!
+  delegate: String!
+  previousBalance: BigInt!
+  newBalance: BigInt!
+  blockTimestamp: BigInt!
+  txnHash: String!
+  blockNumber: BigInt!
 }
-type VotingDelaySet {
+
+type DelegateChange @entity {
   id: ID!
-  oldVotingDelay: BigInt!
-  newVotingDelay: BigInt!
-  eventsSummary: String!
+  oldDelegate: String
+  newDelegate: String
+  delegator: String!
+  blockTimestamp: BigInt!
+  txnHash: String!
+  blockNumber: BigInt!
 }
-type VotingPeriodSet {
-  id: ID!
-  oldVotingPeriod: BigInt!
-  newVotingPeriod: BigInt!
-  eventsSummary: String!
+
+type DelegatingHistory @entity {
+  id: String!
+  daoName: String!
+  fromDelegate: String
+  toDelegate: String
+  delegator: String!
+  amount: BigInt!
+  timestamp: BigInt!
 }
