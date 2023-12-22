@@ -86,14 +86,27 @@ GovernanceContract_VoteCast_handler(({ event, context }) => {
  
   let userId = event.params.voter;
   let user = context.User.get(userId);
-  if (!user) {
+  let updatedOrganizations;
+
+  if (!user) {    
+    updatedOrganizations = [daoName];
     user = {
       id: userId,
-      organization: daoName, 
+      organizations: updatedOrganizations,    
     };
-    context.User.set(user);
+  } else {    
+    updatedOrganizations = user.organizations ? user.organizations.slice() : [];
+    if (!updatedOrganizations.includes(daoName)) {
+      updatedOrganizations.push(daoName);
+    }
+    
+    user = {
+      ...user,
+      organizations: updatedOrganizations
+    };
   }
 
+  context.User.set(user);
   
   let newVote = {
     id: voteId,
@@ -110,7 +123,6 @@ GovernanceContract_VoteCast_handler(({ event, context }) => {
   context.Vote.set(newVote);
 });
 
-
 GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
   let daoName = getDaoNameByContractAddress(event.srcAddress);
   let proposalIdBigInt = BigInt(event.params.proposalId);
@@ -119,17 +131,36 @@ GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
 
   let userId = event.params.voter;
   let user = context.User.get(userId);
+  let updatedOrganizations;
+
   if (!user) {
+
+    updatedOrganizations = [daoName];
     user = {
       id: userId,
-      organization: daoName, 
+      organizations: updatedOrganizations,
+      
+    };
+  } else {
+   
+    updatedOrganizations = user.organizations ? user.organizations.slice() : [];
+    if (!updatedOrganizations.includes(daoName)) {
+      updatedOrganizations.push(daoName);
+    }
+
+  
+    user = {
+      ...user,
+      organizations: updatedOrganizations
     };
   }
+
+  
   context.User.set(user);
 
   let newVote = {
     id: voteId,
-    user: event.params.voter,
+    user: userId,
     proposal: proposalId,
     support: Number(event.params.support), 
     weight: event.params.weight,
@@ -142,10 +173,5 @@ GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
   context.Vote.set(newVote);
 });
 
-// Delegator Handlers 
 
-
-
-
-
-
+// Delegator Handlers

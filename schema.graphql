@@ -3,12 +3,14 @@ type Organization @entity {
   token: String!
   delegates: [DelegateOrganization!] @derivedFrom(field: "organization")
   delegators: [DelegatorOrganization!] @derivedFrom(field: "organization")
+  roposals: [Proposal!] @derivedFrom(field: "organization")  
+  votes: [Vote!] @derivedFrom(field: "organization")
 }
 
 type User @entity {
   id: ID!
   votes: [Vote!]! @derivedFrom(field: "user")
-  organization: Organization
+  organizations: [Organization!] 
   delegateOrganizations: [DelegateOrganization!] @derivedFrom(field: "delegate")
   delegatorOrganizations: [DelegatorOrganization!]
     @derivedFrom(field: "delegator")
@@ -59,7 +61,7 @@ type DelegateVotingPowerChange @entity {
   delegate: String!
   previousBalance: BigInt!
   newBalance: BigInt!
-  blockTimestamp: BigInt!
+  blockTimestamp: BigInt
   txnHash: String!
   blockNumber: BigInt!
 }
