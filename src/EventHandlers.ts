@@ -175,3 +175,70 @@ GovernanceContract_VoteCastWithParams_handler(({ event, context }) => {
 
 
 // Delegator Handlers
+GovTokenContract_DelegateChanged_handler(({ event, context }) => {
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let delegatorId = event.params.delegator;
+  let toDelegateId = event.params.toDelegate;
+
+  
+  let delegatorUser = context.User.get(delegatorId);
+  if (!delegatorUser) {
+    delegatorUser = {
+      id: delegatorId,
+      organizations: [daoName],
+    
+    };
+  } else {
+    
+    let updatedOrganizations = delegatorUser.organizations ? [...delegatorUser.organizations] : [];
+    if (!updatedOrganizations.includes(daoName)) {
+      updatedOrganizations.push(daoName);
+    }
+    delegatorUser = { ...delegatorUser, organizations: updatedOrganizations };
+  }
+  context.User.set(delegatorUser);
+
+  
+  let delegateUser = context.User.get(toDelegateId);
+  if (!delegateUser) {
+    delegateUser = {
+      id: toDelegateId,
+      organizations: [daoName],
+      
+    };
+  } else {
+    let updatedOrganizations = delegateUser.organizations ? [...delegateUser.organizations] : [];
+    if (!updatedOrganizations.includes(daoName)) {
+      updatedOrganizations.push(daoName);
+    }
+    delegateUser = { ...delegateUser, organizations: updatedOrganizations };
+  }
+  context.User.set(delegateUser);
+
+  
+ 
+});
+
+
+GovTokenContract_DelegateVotesChanged_handler(({ event, context }) => {
+  let daoName = getDaoNameByContractAddress(event.srcAddress);
+  let delegateId = event.params.delegate;
+  let newBalance = event.params.newBalance;
+
+  // Atualiza ou cria o usuário delegado
+  let delegateUser = context.User.get(delegateId);
+  if (!delegateUser) {
+    delegateUser = {
+      id: delegateId,
+      organizations: [daoName],
+      // Inicialize outros campos necessários para o User
+    };
+  } else {
+    let updatedOrganizations = delegateUser.organizations ? [...delegateUser.organizations] : [];
+    if (!updatedOrganizations.includes(daoName)) {
+      updatedOrganizations.push(daoName);
+    }
+    delegateUser = { ...delegateUser, organizations: updatedOrganizations };
+  }
+  context.User.set(delegateUser);
+});
